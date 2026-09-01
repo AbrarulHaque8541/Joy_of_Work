@@ -1,88 +1,181 @@
-# DeepSeek Harness - Working Providers & Models
+# DeepSeek Harness - Working Configuration
 
-## Provider Test Results (Sept 2026)
+## Version
+- DSH: v0.1.2-alpha.2 (latest as of Sept 2026)
+- Environment: proot Ubuntu on ARM64 (Termux/Android)
 
-### ✅ WORKING PROVIDERS
+## Working LLM Providers (pi-ai catalog)
 
-#### 1. **Groq** (FREE - 4 Keys Working)
-- **Models:**
-  - `qwen/qwen3.8-27b` ⭐ (Recommended)
-  - `qwen/qwen3.6-27b`
+### FREE Tier Providers
+
+#### Groq (6 models in catalog)
+- **Status:** WORKING - 4 keys tested
+- **API Keys:** `GROQ_API_KEY`, `GROQ_API_KEY_1`, `GROQ_API_KEY_3`, `GROQ_API_KEY_6`
+- **Default Model:** `llama-3.3-70b-versatile` (70B, best free)
+- **Fast Model:** `llama-3.1-8b-instant` (8B, fastest)
+- **Other models:** `qwen/qwen3.6-27b`, `openai/gpt-oss-120b`, `openai/gpt-oss-20b`
+
+#### OpenRouter (346 models in catalog)
+- **Status:** WORKING - all 8 keys tested
+- **API Keys:** `OPENROUTER_API_KEY` + 7 more
+- **Free models:** `google/gemini-2.0-flash`, `meta-llama/llama-3.3-70b-instruct`
+- **Models:** 420 per key
+
+### PAID Providers
+
+#### Mistral (31 models in catalog)
+- **Status:** WORKING
+- **API Key:** `MISTRAL_API_KEY`
+- **Verified working:** `codestral-latest`, `mistral-small-latest`, `magistral-medium-latest`
+- **No credits issue** - confirmed working
+
+#### NVIDIA NIM (30 catalog, 3 verified)
+- **Status:** WORKING (limited)
+- **API Keys:** `NVIDIA_API_KEY` + 2 more
+- **Verified working:**
   - `openai/gpt-oss-120b`
   - `openai/gpt-oss-20b`
-  - `groq/compound`
-  - `groq/compound-mini`
-  - `allam-2-7b`
-- **Best for:** Fastest inference, free tier
-- **API Endpoint:** `https://api.groq.com/openai/v1`
+  - `meta/llama-3.2-11b-vision-instruct`
+- **EOL models:** `meta/llama-3.1-8b-instruct`, `meta/llama-3.3-70b-instruct`, `google/gemma-3-12b-it`
 
-#### 2. **OpenRouter** (FREE - 8 Keys Working)
-- **Models:**
-  - `minimax/minimax-m3:free` ⭐ (Best free model)
-  - `inclusionai/ling-3.0-flash-fin:free`
-  - `nvidia/nemotron-3.5-lightning:free`
-  - `cohere/north-mini-code:free`
-  - `dots-studio/dots-3-note-preview:free`
-  - `liquid/lfm-2.5-2.6b:free`
-  - `minimax/minimax-m2.7:free`
-- **Best for:** Multiple free models, auto-failover
-- **API Endpoint:** `https://openrouter.ai/api/v1`
+## NOT Working Providers
 
-#### 3. **Mistral** (Paid - 1 Key Working)
-- **Models:**
-  - `mistral-small-latest` ⭐
-  - `mistral-small-2603`
-  - `codestral-latest` ⭐ (Best for coding)
-  - `mistral-code-latest`
-  - `mistral-vibe-cli-fast`
-  - `magistral-small-latest`
-- **Best for:** Coding tasks, fast small models
-- **API Endpoint:** `https://api.mistral.ai/v1`
+| Provider | Reason | Keys |
+|---------|--------|------|
+| DeepSeek | No balance (0 credits) | Multiple keys |
+| OpenAI | No balance | `OPENAI_API_KEY` |
+| Anthropic | Invalid API key | `ANTHROPIC_API_KEY` |
+| xAI | No balance | `XAI_API_KEY`, `XAI_MANAGEMENT_KEY` |
+| Google/Gemini | Key leaked/compromised | `GOOGLE_API_KEY` |
+| Cohere | Works via baseURL | `COHERE_API_KEY` |
+| HuggingFace | No chat endpoint | `HF_API_KEY`, `HF_API_KEY_3` |
+| Venice | No balance | `VENICE_API_KEY` |
+| FreeModel | No balance | `FREEMODEL_API_KEY` |
+| BytePlus | Endpoint access denied | `BYTEPLUS_API_KEY` |
+| Mimo | No balance | `MIMO_API_KEY` |
+| Sakana | No balance | `SAKANA_API_KEY` |
+| StepFun | Invalid key | `STEPFUN_API_KEY` |
+| Alibaba/DashScope | Invalid key | `ALIBABA_CLAUDE_KEY` |
+| Cerebras/Together | No TOGETHER_API_KEY | N/A |
+| Moonshot/Kimi | Invalid authentication | Multiple keys |
+| Exa Search API | Invalid key | `CSE6BF92-...` (uppercase) |
 
-### ❌ PROVIDERS WITH ISSUES
+## pi-ai Catalog Summary
 
-#### DeepSeek (Keys Valid but NO Balance)
-- `deepseek-v4-flash`
-- `deepseek-v4-pro`
-- `deepseek-v4-flash-vision-exp`
-- **Issue:** Account has no credits remaining
+Total: **1267 catalog entries across 39 providers**
 
-#### OpenAI (NO Balance)
-- **Issue:** No credits remaining
+Key providers NOT in our .env: `amazon-bedrock`, `baseten`, `cloudflare-ai-gateway`, `fireworks`, `github-copilot`, `google-vertex`, `openai-codex`, `opencode`, `vercel-ai-gateway`
 
-#### Anthropic (Invalid Key)
-- **Issue:** API key is invalid
+## Current cordis.patch.yml (Working)
 
-#### NVIDIA (Partial Working)
-- Only `meta/llama-3.2-11b-vision-instruct` works
-- Needs `baseURL: https://integrate.api.nvidia.com/v1`
+```yaml
+# DeepSeek Harness - COMPLETE Configuration
+# - All working LLM providers with ACTUAL pi-ai catalog model IDs
+# - Exa web search provider configured
+# Updated: Sept 2026
+# DSH version: 0.1.2-alpha.2 (latest)
 
-#### xAI, Mimo, Sakana, FreeModel, StepFun, Z.ai
-- **Issue:** No credits or token expired/invalid
+- id: llm-pi-ai
+  config:
+    providers:
+      groq:
+        apiKeyEnv: GROQ_API_KEY
+        models:
+          - id: llama-3.1-8b-instant
+            name: Llama 3.1 8B (Fastest FREE)
+          - id: llama-3.3-70b-versatile
+            name: Llama 3.3 70B (Best FREE)
+          - id: qwen/qwen3.6-27b
+            name: Qwen 3.6 27B
+          - id: openai/gpt-oss-120b
+            name: GPT-OSS 120B
+          - id: openai/gpt-oss-20b
+            name: GPT-OSS 20B
+        retryPolicy:
+          mode: normal
+          maxRetries: 5
 
-#### Cohere, HuggingFace, Upstage
-- Keys work but need custom `api` and `baseURL` config
-- Not yet configured in pi-ai plugin
+      openrouter:
+        apiKeyEnv: OPENROUTER_API_KEY
+        models:
+          - id: deepseek/deepseek-chat-v3
+            name: DeepSeek V3
+          - id: google/gemini-2.0-flash
+            name: Gemini 2.0 Flash
+          - id: meta-llama/llama-3.3-70b-instruct
+            name: Llama 3.3 70B
+          - id: mistralai/mistral-7b-instruct
+            name: Mistral 7B
+          - id: anthropic/claude-3-haiku
+            name: Claude 3 Haiku
+        retryPolicy:
+          mode: normal
+          maxRetries: 5
 
----
+      mistral:
+        apiKeyEnv: MISTRAL_API_KEY
+        models:
+          - id: codestral-latest
+            name: Codestral (Coding)
+          - id: mistral-small-latest
+            name: Mistral Small
+          - id: magistral-medium-latest
+            name: Magistral Medium
+          - id: devstral-small-2507
+            name: Devstral Small
+        retryPolicy:
+          mode: normal
+          maxRetries: 3
 
-## Configuration Files
+      nvidia:
+        apiKeyEnv: NVIDIA_API_KEY
+        models:
+          - id: openai/gpt-oss-120b
+            name: GPT-OSS 120B
+          - id: openai/gpt-oss-20b
+            name: GPT-OSS 20B
+          - id: meta/llama-3.2-11b-vision-instruct
+            name: Llama 3.2 Vision 11B
+        retryPolicy:
+          mode: normal
+          maxRetries: 3
 
-### `~/.dsh/profiles/web/cordis.patch.yml`
-Contains the active provider configuration.
+- id: web
+  config:
+    searchProvider: exa
+    fetchProvider: http
 
-### `~/.dsh/settings.yaml`
-Contains model preferences and agent presets.
+- id: web-search-exa
+  name: '@deepseek-ai/dsh-web-search-exa'
+  config:
+    apiKeyEnv: EXA_API_KEY
+    baseURL: https://api.exa.ai
 
----
+- id: agent-default-model
+  config:
+    provider: groq
+    model: llama-3.3-70b-versatile
+```
 
-## Quick Reference
+## Setup Commands
 
-**Default Model:** `groq` / `qwen/qwen3.8-27b`
+```bash
+# Install Exa search package
+cd /root/deepseek-harness
+pnpm dsh plugin --profile web add packages/web/web-search-exa
 
-**Free Models Available:**
-1. Groq: 7 models (qwen, gpt-oss, compound, allam)
-2. OpenRouter: 7 models (minimax, ling, nemotron, etc.)
+# Restart server
+pm2 restart dsh-web
 
-**Paid Models Available:**
-1. Mistral: 6 models (small, codestral, etc.)
+# Check status
+pm2 list
+pm2 logs dsh-web --lines 10
+```
+
+## Model Selection Priority
+
+1. **Default:** `groq/llama-3.3-70b-versatile` (FREE, 70B)
+2. **Fast:** `groq/llama-3.1-8b-instant` (FREE, 8B)
+3. **Reasoning:** `groq/openai/gpt-oss-120b` (FREE, 120B)
+4. **Coding:** `mistral/codestral-latest` (PAID)
+5. **Vision:** `nvidia/meta/llama-3.2-11b-vision-instruct` (PAID)
